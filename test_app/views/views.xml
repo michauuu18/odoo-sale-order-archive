@@ -1,0 +1,51 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="test_app.sale_order_archive_list">
+      <field name="name">sale_order_archive list</field>
+      <field name="model">sale_order_archive</field>
+      <field name="arch" type="xml">
+          <tree>
+            <field name="name"/>
+            <field name="order_create_date"/>
+            <field name="customer"/>
+            <field name="sale_person"/>
+            <field name="currency_id"/>
+            <field name="order_total_amount"/>
+            <field name="count_of_lines"/>
+          </tree>
+      </field>
+    </record>
+
+    <record id="archive_order_cron" forcecreate='True' model="ir.cron">
+      <field name="name">Archive order</field>
+      <field eval="True" name="active"/>
+      <field name="user_id" ref="base.user_root"/>
+      <field name="interval_number">1</field>
+      <field name="priority" eval="10" />
+      <field name="interval_type">minutes</field>
+      <field name="numbercall">-1</field>
+      <field name="model_id" ref="model_sale_order_archive"/>
+      <field name="state">code</field>
+      <field name="code">model.check_orders_to_archive()</field>
+    </record>
+
+    <record id="archiving_orders" model="ir.actions.server">
+      <field name="name">Archive Order</field>
+      <field name="model_id" ref="model_sale_order_archive"/>
+      <field name="type">ir.actions.server</field>
+      <field name="state">code</field>
+      <field name="code">model.check_orders_to_archive()</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="test_app.sale_order_archive_action_list">
+      <field name="name">sale_order_archive window</field>
+      <field name="res_model">sale_order_archive</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Order Archive Sale" id="test_app.menu_root"/>
+    <menuitem name="Sale order archive - list" id="test_app.sale_order_archive_menu" parent="test_app.menu_root" action="test_app.sale_order_archive_action_list"/>
+    <menuitem id="archiving_orders_button" name="Archiving orders" parent="test_app.menu_root" action="archiving_orders"/>
+
+  </data>
+</odoo>
